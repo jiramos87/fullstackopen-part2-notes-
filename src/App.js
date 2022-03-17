@@ -16,7 +16,7 @@ const App = () => {
     .then(initialNotes => {
       setNotes(initialNotes)
     })
-  }, [])
+  }, [deleteNote])
 
   const addNote = (event) => {
     event.preventDefault()
@@ -60,6 +60,19 @@ const App = () => {
       })
   }
 
+  const deleteNote = id => {
+    noteService
+      .deleteNote(id)
+      .catch(error => {
+        setErrorMessage(
+          `Not found in server`
+        )
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      })
+  }
+
   const notesToShow = showAll
     ? notes
     : notes.filter(note => note.important)
@@ -75,7 +88,10 @@ const App = () => {
       </div>
       <ul>
         {notesToShow.map(note =>
-          <Note key={note.id} note={note} toggleImportance={() => toggleImportanceOf(note.id)} />
+          <Note key={note.id}
+                note={note} 
+                toggleImportance={() => toggleImportanceOf(note.id)} 
+                deleteNote={() => deleteNote(note.id)} />
         )}
       </ul>
       <form onSubmit={addNote}>
